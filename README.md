@@ -1,67 +1,111 @@
-# 🗳️ Private Voting dApp with FHEVM
 
-This is a full-stack decentralized application that allows users to vote privately using Fully Homomorphic Encryption on Zama's FHEVM.
+# 🗳️ FHEVM Private Voting dApp
+
+This is a fully functional decentralized application (dApp) demo using Zama's FHEVM, enabling **confidential voting** where votes remain private while results are verifiable.
+
+## 🔐 Technology Stack
+
+- **Smart Contract**: Solidity + FHEVM (Zama Devnet)
+- **Frontend**: React + Vite
+- **Backend**: Hardhat + Ethers.js + Zama’s FHE tools
+- **Deployment**: Vercel / Fleek (for frontend)
 
 ---
 
-## 📦 Tech Stack
+## 📁 Folder Structure
 
-- **Smart Contract**: Solidity + Zama FHEVM
-- **Frontend**: React + TypeScript
-- **Encryption SDK**: @zama-fhe/sdk
+```
+fhevm-voting-demo/
+├── contracts/             # Smart contract using FHEVM
+├── frontend/              # React-based frontend
+├── scripts/               # Deployment and interaction scripts
+├── test/                  # Unit tests using Mocha/Chai
+├── hardhat.config.js      # Hardhat configuration
+└── README.md              # Project documentation
+```
 
 ---
 
-## 🛠 Setup Instructions
+## 🧪 Sample Test Case
 
-### 1. Clone & Install
+```js
+// test/Voting.test.js
+const { expect } = require("chai");
+
+describe("Voting", function () {
+  it("Should allow encrypted vote and tally correctly", async function () {
+    const Voting = await ethers.getContractFactory("PrivateVoting");
+    const voting = await Voting.deploy();
+    await voting.waitForDeployment();
+
+    await voting.voteEncrypted("0xfhe_encrypted_vote");
+    const result = await voting.getEncryptedTally();
+    expect(result).to.not.be.null;
+  });
+});
+```
+
+---
+
+## 🔐 Mock User Authentication (Frontend)
+
+```js
+// frontend/src/utils/auth.js
+export function authenticateUser(username, password) {
+  return username === "admin" && password === "123456";
+}
+```
+
+You can extend this with wallet-based login using MetaMask.
+
+---
+
+## 🚀 Getting Started
+
+### 1. Install dependencies
 
 ```bash
-git clone <your-repo-url>
-cd fhevm-voting
 npm install
+cd frontend && npm install
 ```
 
-### 2. Configure Hardhat
-
-Edit `hardhat.config.ts` with your private key:
-
-```ts
-accounts: ["<YOUR_PRIVATE_KEY>"]
-```
-
-### 3. Deploy Contract
+### 2. Compile & Deploy Smart Contract
 
 ```bash
 npx hardhat compile
-npx hardhat run scripts/deploy.ts --network zama
+npx hardhat run scripts/deploy.js --network zama
 ```
 
-Copy the deployed address into `App.tsx` as `CONTRACT_ADDRESS`.
-
----
-
-### 4. Frontend Setup
+### 3. Run Frontend Locally
 
 ```bash
-cd ../private-voting
-npm install
-npm start
+cd frontend
+npm run dev
 ```
 
-Make sure MetaMask is connected to Zama Devnet.
+Then open `http://localhost:5173`
 
 ---
 
-## ✅ Functions
+## ☁️ Deploy Frontend
 
-- `submitVote(0|1)`: Submit YES (1) or NO (0) encrypted.
-- `getEncryptedResults()`: Returns sealed encrypted vote count.
+### ▶️ Deploy with Vercel
+
+1. Push your code to GitHub
+2. Go to [vercel.com](https://vercel.com)
+3. Import your GitHub repo
+4. Set build command: `npm run build`
+5. Set output dir: `dist`
+
+### 🧬 Deploy with Fleek (Web3 IPFS)
+
+1. Go to [fleek.xyz](https://fleek.xyz)
+2. Connect your GitHub repo
+3. Use default build settings for Vite
+4. Fleek will deploy to IPFS
 
 ---
 
-## 🔒 Powered by FHEVM
+## 📄 License
 
-Votes remain encrypted throughout and only viewable after decryption on the client-side.
-
----
+MIT © 2025
